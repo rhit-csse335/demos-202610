@@ -1,0 +1,57 @@
+#!/bin/bash
+#PBS -N mpi_deadlock_demo
+#PBS -l nodes=2:ppn=1
+#PBS -l walltime=00:05:00
+#PBS -j oe
+#PBS -o deadlock_demo.out
+
+# Load MPI module (adjust for your cluster)
+module load openmpi
+# or: module load mpich
+# or: module load intel-mpi
+
+# Change to the directory where the job was submitted
+cd $PBS_O_WORKDIR
+
+# Print job info
+echo "Job started at: $(date)"
+echo "Job ID: $PBS_JOBID"
+echo "Running on nodes: $(cat $PBS_NODEFILE | sort | uniq | tr '\n' ' ')"
+echo "Number of processes: 2"
+echo ""
+
+# Compile the program
+echo "Compiling MPI deadlock demo..."
+mpicc -o deadlock_demo deadlock_demo.c
+
+if [ $? -ne 0 ]; then
+    echo "Compilation failed!"
+    exit 1
+fi
+
+echo "Compilation successful."
+echo ""
+
+# Run the program - this will hang due to deadlock!
+echo "Starting MPI program (will deadlock)..."
+echo "If you see only 'Starting data exchange' messages and then nothing,"
+echo "the program has deadlocked as expected."
+echo ""
+
+# Set a timeout to kill the job after it demonstrates the deadlock
+timeout 30s mpiexec -np 2 --hostfile $PBS_NODEFILE ./deadlock_demo
+
+if [ $? -eq 124 ]; then
+    echo ""
+    echo "Program timed out after 30 seconds - DEADLOCK DEMONSTRATED!"
+    echo "Both processes are stuck waiting for each other."
+else
+    echo ""
+    echo "Program completed unexpectedly - this shouldn't happen!"
+fi
+
+echo ""
+echo "Job completed at: $(date)"
+
+# Cleanup
+rm -f ./deadlock_demo
