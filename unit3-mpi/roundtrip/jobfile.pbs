@@ -1,0 +1,16 @@
+#!/bin/bash
+#PBS -N mpi_timing_demo
+#PBS -l nodes=2:ppn=1
+#PBS -l walltime=00:05:00
+#PBS -o output.txt
+#PBS -e error.txt
+
+# Change to the directory where the job was submitted
+cd $PBS_O_WORKDIR
+
+# Build the program
+make clean
+make
+
+# Run the MPI program
+mpirun -np 2 ./mpi_timing

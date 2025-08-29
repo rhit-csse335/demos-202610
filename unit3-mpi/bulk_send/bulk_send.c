@@ -10,7 +10,7 @@
  * is much slower than sending 1000 values, 1 time.
  ******/
 
-const int PROBLEM_SIZE = 10000;
+const int PROBLEM_SIZE = 1000;
 
 void randomize_array(double* data_array) {
     for (int i = 0; i < PROBLEM_SIZE; ++i) 
