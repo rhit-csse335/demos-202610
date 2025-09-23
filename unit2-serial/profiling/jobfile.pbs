@@ -1,0 +1,44 @@
+#!/bin/bash
+#PBS -N lu_gprof_demo
+#PBS -l walltime=00:05:00
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=1gb
+#PBS -q class
+#PBS -j oe
+
+# Change to the directory where the job was submitted
+cd $PBS_O_WORKDIR
+
+# Load any necessary modules (adjust as needed for your cluster)
+# module load gcc
+
+# Print job information
+echo "Job started at: $(date)"
+echo "Job ID: $PBS_JOBID"
+echo "Running on node: $(hostname)"
+echo "Working directory: $(pwd)"
+echo ""
+
+# Build the program
+echo "Building lu_demo with profiling support..."
+make clean
+make all
+
+# Run the program to generate profiling data
+echo "Running lu_demo to generate profiling data..."
+./lu_demo
+
+# Generate gprof report
+echo "Generating gprof report..."
+gprof lu_demo gmon.out > gprof_report.txt
+
+echo ""
+echo "Full report saved to: gprof_report.txt"
+echo ""
+
+# List generated files
+echo "Generated files:"
+ls -la lu_demo gmon.out gprof_report.txt
+
+echo ""
+echo "Job completed at: $(date)"
