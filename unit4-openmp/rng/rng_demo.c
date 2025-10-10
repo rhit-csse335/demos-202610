@@ -28,11 +28,15 @@ int main(int argc, char *argv[]) {
 
     #pragma omp parallel num_threads(num_threads)
     {
+        double local_sum = 0.0;
+
         for (long i = 0; i < samples_per_thread; i++) {
             double r = 2.0 * rand() / RAND_MAX - 1.0;  // Map to [-1, 1]
-            #pragma omp atomic
-            sum += r;
+            local_sum += r;
         }
+
+        #pragma omp atomic
+        sum += local_sum;
     }
 
     double end_time = omp_get_wtime();

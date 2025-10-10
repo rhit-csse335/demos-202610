@@ -8,18 +8,15 @@
 # Change to the directory where the job was submitted
 cd $PBS_O_WORKDIR
 
-# Run with varying thread counts to show the issues
-echo "=== Single Thread (Baseline) ==="
-./rng_demo 1 1000000
+make
 
-echo ""
-echo "=== Two Threads ==="
-./rng_demo 2 500000
-
-echo ""
-echo "=== Four Threads ==="
-./rng_demo 4 250000
-
-echo ""
-echo "=== Eight Threads ==="
+echo "=========================================="
+echo "Unsafe version using rand():"
+echo "=========================================="
 ./rng_demo 8 125000
+
+echo ""
+echo "=========================================="
+echo "Safe version using rand_r():"
+echo "=========================================="
+./rng_demo_safe 8 125000

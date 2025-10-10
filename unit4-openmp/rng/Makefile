@@ -1,18 +1,20 @@
 CC = gcc
 CFLAGS = -g -Wall -fopenmp
 LIBS = -lm
-TARGET = rng_demo
-SOURCE = rng_demo.c
+TARGETS = rng_demo rng_demo_safe
 
 # Default target
-all: $(TARGET)
+all: $(TARGETS)
 
-$(TARGET): $(SOURCE)
-	$(CC) $(CFLAGS) -o $(TARGET) $(SOURCE) $(LIBS)
-	@echo "Built $(TARGET) with flags: $(CFLAGS)"
-	@echo "Ready to run: ./$(TARGET) <num_threads> <samples_per_thread>"
+rng_demo: rng_demo.c
+	$(CC) $(CFLAGS) -o rng_demo rng_demo.c $(LIBS)
+	@echo "Built rng_demo with flags: $(CFLAGS)"
+
+rng_demo_safe: rng_demo_safe.c
+	$(CC) $(CFLAGS) -o rng_demo_safe rng_demo_safe.c $(LIBS)
+	@echo "Built rng_demo_safe with flags: $(CFLAGS)"
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGETS)
 
 .PHONY: all clean
